@@ -1,7 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
+}
+
+class Quote {
+  Quote({
+    required this.anime,
+    required this.character,
+    required this.quote,
+  });
+
+  String anime;
+  String character;
+  String quote;
+  factory Quote.fromJson(Map<String, dynamic> json) {
+    return Quote(
+        anime: json['anime'],
+        character: json['character'],
+        quote: json['quote']);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +34,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color.fromARGB(0, 255, 255, 255),
+          seedColor: const Color.fromARGB(255, 255, 255, 255),
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
@@ -34,25 +54,60 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  String quoteText = '';
+  String anime = '';
+  String char = '';
 
-  void _resetQuote() {
-    setState(() {
-      _counter++;
-    });
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _resetQuote() async {
+    var headersList = {
+      'Accept': '*/*',
+      'User-Agent': 'Thunder Client (https://www.thunderclient.com)'
+    };
+    var url = Uri.parse('https://lemonquotaku.pythonanywhere.com/quote');
+
+    var req = http.Request('GET', url);
+    req.headers.addAll(headersList);
+
+    var res = await req.send();
+    final resBody = await res.stream.bytesToString();
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      final responseJson = jsonDecode(resBody);
+      final quote = Quote.fromJson(responseJson);
+      print(quote.quote);
+      setState(() {
+        quoteText = quote.quote;
+        char = quote.character;
+        anime = quote.anime;
+      });
+    } else {
+      print(res.reasonPhrase);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        elevation: 0,
+        bottomOpacity: 0,
+        toolbarHeight: 100,
         automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Colors.transparent,
         title: Center(
           child: Text(
             widget.title,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: ''),
+            style: const TextStyle(
+              fontFamily: 'Kareudon',
+              fontSize: 100,
+            ),
           ),
         ),
       ),
@@ -84,29 +139,36 @@ class _MyHomePageState extends State<MyHomePage> {
                     margin: const EdgeInsets.all(40),
                     color: Theme.of(context).canvasColor,
                     elevation: 2,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            'Quote Here',
-                            style: TextStyle(
-                              fontSize: 50,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSecondaryContainer,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              '$quoteText',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Merriweather',
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer,
+                              ),
                             ),
-                          ),
-                          Text(
-                            '-character, anime',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onTertiaryContainer,
+                            const SizedBox(
+                              height: 10,
                             ),
-                          ),
-                        ]),
+                            Text(
+                              '-$char, $anime',
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onTertiaryContainer,
+                              ),
+                            ),
+                          ]),
+                    ),
                   ),
                 ),
               ],
