@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String quoteText = '';
   String anime = '';
   String char = '';
-  bool loading = false;
+  bool loading = true;
   void _getQuote() async {
     var headersList = {
       'Accept': '*/*',
@@ -79,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
       final quote = Quote.fromJson(responseJson);
       print(quote.quote);
       setState(() {
+        loading = false;
         quoteText = quote.quote;
         char = quote.character;
         anime = quote.anime;
