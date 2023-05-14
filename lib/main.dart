@@ -57,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String quoteText = '';
   String anime = '';
   String char = '';
+  bool loading = false;
   void _getQuote() async {
     var headersList = {
       'Accept': '*/*',
@@ -91,6 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _resetQuote() async {
+    setState(() {
+      loading = true;
+    });
     var headersList = {
       'Accept': '*/*',
       'User-Agent': 'Thunder Client (https://www.thunderclient.com)'
@@ -108,6 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
       final quote = Quote.fromJson(responseJson);
       print(quote.quote);
       setState(() {
+        loading = false;
         quoteText = quote.quote;
         char = quote.character;
         anime = quote.anime;
@@ -169,36 +174,38 @@ class _MyHomePageState extends State<MyHomePage> {
                     elevation: 2,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            quoteText,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 35,
-                              fontFamily: 'Fallscoming',
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSecondaryContainer,
+                      child: loading
+                          ? const CircularProgressIndicator()
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  quoteText,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 35,
+                                    fontFamily: 'Fallscoming',
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondaryContainer,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  '-$char\n$anime',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    fontFamily: 'Merriweather',
+                                    fontStyle: FontStyle.italic,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onTertiaryContainer,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            '-$char\n$anime',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              fontFamily: 'Merriweather',
-                              fontStyle: FontStyle.italic,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onTertiaryContainer,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),
