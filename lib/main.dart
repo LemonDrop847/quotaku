@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(0, 29, 140, 214),
+          seedColor: Color.fromARGB(0, 255, 255, 255),
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
@@ -48,43 +48,70 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(
-          widget.title,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontFamily: ''),
+        title: Center(
+          child: Text(
+            widget.title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontFamily: ''),
+          ),
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Card(
-              margin: const EdgeInsets.all(40),
-              color: Theme.of(context).canvasColor,
-              elevation: 2,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Quote Here',
-                      style: TextStyle(
-                        fontSize: 50,
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer,
-                      ),
-                    ),
-                    Text(
-                      '-character, anime',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        color:
-                            Theme.of(context).colorScheme.onTertiaryContainer,
-                      ),
-                    ),
-                  ]),
-            )
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg1.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Theme.of(context).colorScheme.background,
+              ],
+            ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Opacity(
+                  opacity: 1.0,
+                  child: Card(
+                    margin: const EdgeInsets.all(40),
+                    color: Theme.of(context).canvasColor,
+                    elevation: 2,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Quote Here',
+                            style: TextStyle(
+                              fontSize: 50,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer,
+                            ),
+                          ),
+                          Text(
+                            '-character, anime',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onTertiaryContainer,
+                            ),
+                          ),
+                        ]),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
