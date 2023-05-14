@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'dart:convert';
 
 void main() {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MyApp());
 }
 
@@ -88,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     _getQuote();
+    FlutterNativeSplash.remove();
     super.initState();
   }
 
