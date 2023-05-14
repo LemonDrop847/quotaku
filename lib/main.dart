@@ -57,13 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String quoteText = '';
   String anime = '';
   String char = '';
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void _resetQuote() async {
+  void _getQuote() async {
     var headersList = {
       'Accept': '*/*',
       'User-Agent': 'Thunder Client (https://www.thunderclient.com)'
@@ -91,8 +85,42 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState() {
+    _getQuote();
+    super.initState();
+  }
+
+  void _resetQuote() async {
+    var headersList = {
+      'Accept': '*/*',
+      'User-Agent': 'Thunder Client (https://www.thunderclient.com)'
+    };
+    var url = Uri.parse('https://lemonquotaku.pythonanywhere.com/forcequote');
+
+    var req = http.Request('GET', url);
+    req.headers.addAll(headersList);
+
+    var res = await req.send();
+    final resBody = await res.stream.bytesToString();
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      final responseJson = jsonDecode(resBody);
+      final quote = Quote.fromJson(responseJson);
+      print(quote.quote);
+      setState(() {
+        quoteText = quote.quote;
+        char = quote.character;
+        anime = quote.anime;
+      });
+    } else {
+      print(res.reasonPhrase);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
@@ -142,32 +170,35 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              '$quoteText',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'Merriweather',
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSecondaryContainer,
-                              ),
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            quoteText,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontFamily: 'Fallscoming',
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer,
                             ),
-                            const SizedBox(
-                              height: 10,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            '-$char\n$anime',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontFamily: 'Merriweather',
+                              fontStyle: FontStyle.italic,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onTertiaryContainer,
                             ),
-                            Text(
-                              '-$char, $anime',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onTertiaryContainer,
-                              ),
-                            ),
-                          ]),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -176,10 +207,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _resetQuote,
         tooltip: 'Refresh',
-        child: const Icon(Icons.refresh),
+        icon: const Icon(Icons.refresh),
+        label: const Text('Get New Quote'),
       ),
     );
   }
