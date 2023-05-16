@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -215,13 +213,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 IconButton(
                                   icon: const Icon(Icons.share),
                                   onPressed: () async {
-                                    File? imageFile = await generateImage(
-                                        quoteText, '-$char\n$anime');
-                                    print(imageFile);
-                                    if (imageFile != null) {
-                                      Share.shareXFiles(
-                                          [XFile(imageFile.path)]);
-                                    }
+                                    // File? imageFile = await generateImage(
+                                    //     quoteText, '-$char\n$anime');
+                                    // print(imageFile);
+                                    // if (imageFile != null) {
+                                    //   Share.shareXFiles(
+                                    //       [XFile(imageFile.path)]);
+                                    // }
                                   },
                                 )
                               ],
