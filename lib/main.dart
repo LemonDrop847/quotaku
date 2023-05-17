@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:quotaku/image_gen.dart';
-import 'package:share_plus/share_plus.dart';
 import 'dart:convert';
 
 void main() {
@@ -213,13 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 IconButton(
                                   icon: const Icon(Icons.share),
                                   onPressed: () async {
-                                    // File? imageFile = await generateImage(
-                                    //     quoteText, '-$char\n$anime');
-                                    // print(imageFile);
-                                    // if (imageFile != null) {
-                                    //   Share.shareXFiles(
-                                    //       [XFile(imageFile.path)]);
-                                    // }
+                                    shareImage(quoteText, '-$char\n$anime');
                                   },
                                 )
                               ],
