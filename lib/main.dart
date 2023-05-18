@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:quotaku/image_gen.dart';
 import 'dart:convert';
+import 'menu.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -130,7 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
@@ -217,22 +217,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                FloatingActionButton(
-                  child: const Icon(Icons.share),
-                  onPressed: () async {
-                    shareCardAsImage(_repaintKey, quoteText, '-$char\n$anime');
-                  },
-                )
               ],
             ),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _resetQuote,
-        tooltip: 'Refresh',
-        icon: const Icon(Icons.refresh),
-        label: const Text('Get New Quote'),
+      floatingActionButton: Menu(
+        onRefreshPressed: _resetQuote,
+        onSharePressed: () async {
+          shareCardAsImage(_repaintKey, quoteText, '-$char\n$anime');
+        },
       ),
     );
   }
