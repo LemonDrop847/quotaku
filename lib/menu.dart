@@ -5,6 +5,7 @@ class Menu extends StatefulWidget {
   final VoidCallback onSharePressed;
 
   const Menu({
+    super.key,
     required this.onRefreshPressed,
     required this.onSharePressed,
   });
