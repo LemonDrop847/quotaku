@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:quotaku/image_gen.dart';
@@ -57,6 +56,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final GlobalKey _repaintKey = GlobalKey();
   String quoteText = '';
   String anime = '';
   String char = '';
@@ -173,53 +173,56 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Opacity(
                   opacity: 1.0,
-                  child: Card(
-                    margin: const EdgeInsets.all(40),
-                    color: Theme.of(context).canvasColor,
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: loading
-                          ? const CircularProgressIndicator()
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  quoteText,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 35,
-                                    fontFamily: 'Fallscoming',
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondaryContainer,
+                  child: RepaintBoundary(
+                    key: _repaintKey,
+                    child: Card(
+                      margin: const EdgeInsets.all(40),
+                      color: Theme.of(context).canvasColor,
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: loading
+                            ? const CircularProgressIndicator()
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    quoteText,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 35,
+                                      fontFamily: 'Fallscoming',
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Text(
-                                  '-$char\n$anime',
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    fontFamily: 'Merriweather',
-                                    fontStyle: FontStyle.italic,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onTertiaryContainer,
+                                  const SizedBox(
+                                    height: 20,
                                   ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.share),
-                                  onPressed: () async {
-                                    shareImage(quoteText, '-$char\n$anime');
-                                  },
-                                )
-                              ],
-                            ),
+                                  Text(
+                                    '-$char\n$anime',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      fontFamily: 'Merriweather',
+                                      fontStyle: FontStyle.italic,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onTertiaryContainer,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
                     ),
                   ),
                 ),
+                FloatingActionButton(
+                  child: const Icon(Icons.share),
+                  onPressed: () async {
+                    shareCardAsImage(_repaintKey, quoteText, '-$char\n$anime');
+                  },
+                )
               ],
             ),
           ),
