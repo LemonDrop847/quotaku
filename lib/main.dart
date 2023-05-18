@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:quotaku/image_gen.dart';
 import 'dart:convert';
 import 'menu.dart';
@@ -62,6 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String anime = '';
   String char = '';
   bool loading = true;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   void _getQuote() async {
     var headersList = {
       'Accept': '*/*',
@@ -85,15 +90,25 @@ class _MyHomePageState extends State<MyHomePage> {
         char = quote.character;
         anime = quote.anime;
       });
+      scheduleDailyQuoteNotification(quoteText);
     } else {
       print(res.reasonPhrase);
     }
+  }
+
+  void initNotifications() async {
+    const initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   @override
   void initState() {
     _getQuote();
     FlutterNativeSplash.remove();
+    initNotifications();
     super.initState();
   }
 
@@ -126,6 +141,43 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       print(res.reasonPhrase);
     }
+  }
+
+  void scheduleDailyQuoteNotification(String quote) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final int notificationId = 0;
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      notificationId,
+      'Quotaku Daily Quote',
+      quote,
+      _nextInstanceOfTime(),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'daily_quote_channel',
+          'Daily Quote Channel',
+          importance: Importance.defaultImportance,
+        ),
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+
+    prefs.setString('last_quote', quote);
+  }
+
+  tz.TZDateTime _nextInstanceOfTime() {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, 10); // 10 AM
+
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    return scheduledDate;
   }
 
   @override
