@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_quote_channel',
-          'Daily Quote Channel',
+          'Anime Quote Channel',
           importance: Importance.defaultImportance,
         ),
       ),
