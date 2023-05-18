@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void scheduleDailyQuoteNotification(String quote) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final int notificationId = 0;
+    const int notificationId = 0;
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       notificationId,
