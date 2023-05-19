@@ -42,8 +42,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+          tag_name: 'v1.0'
+          release_name: 'Dev Release'
           draft: false
           prerelease: false
 
@@ -62,15 +62,16 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const artifact = await github.repos.getReleaseByTag({
+            const response = await octokit.rest.repos.listReleases({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag: context.ref.replace('refs/tags/', '') 
+              tag_name: 'v1.0'
             });
-            await github.repos.uploadReleaseAsset({
+            const release = response.data.find(r => r.tag_name === 'v1.0');
+            await octokit.rest.repos.uploadReleaseAsset({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              release_id: artifact.data.id,
+              release_id: release.id,
               name: 'app-release.apk',
               data: await fs.promises.readFile('build/app/outputs/flutter-apk/app-release.apk')
             });
