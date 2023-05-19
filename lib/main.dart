@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:quotaku/image_gen.dart';
 import 'dart:convert';
+import 'background_carousel.dart';
+import 'background_option.dart';
 import 'menu.dart';
 
 void main() {
@@ -60,6 +62,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  BackgroundOption? _selectedBackgroundOption;
+  void _setBackgroundOption(BackgroundOption option) {
+    setState(() {
+      _selectedBackgroundOption = option;
+    });
+  }
+
   final GlobalKey _repaintKey = GlobalKey();
   String quoteText = '';
   String anime = '';
@@ -172,11 +181,9 @@ class _MyHomePageState extends State<MyHomePage> {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, 10); // 10 AM
-
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
-
     return scheduledDate;
   }
 
@@ -201,75 +208,116 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/bg1.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
+      body: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BackgroundCarousel(
+                backgroundOptions: [
+                  BackgroundOption(
+                    id: 'bg1',
+                    name: 'Background 1',
+                    imagePath: 'assets/images/bg1.png',
+                  ),
+                  BackgroundOption(
+                    id: 'bg2',
+                    name: 'Background 2',
+                    imagePath: 'assets/images/bg2.jpg',
+                  ),
+                  BackgroundOption(
+                    id: 'bg3',
+                    name: 'Background 3',
+                    imagePath: 'assets/images/bg3.jpg',
+                  ),
+                  BackgroundOption(
+                    id: 'bg4',
+                    name: 'Background 4',
+                    imagePath: 'assets/images/bg4.png',
+                  ),
+                  BackgroundOption(
+                    id: 'bg5',
+                    name: 'Background 5',
+                    imagePath: 'assets/images/bg5.png',
+                  ),
+                ],
+                selectedBackgroundOption: _selectedBackgroundOption,
+                onBackgroundOptionSelected: _setBackgroundOption,
+              ),
+            ),
+          );
+        },
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Theme.of(context).colorScheme.background,
-              ],
+            image: DecorationImage(
+              image: AssetImage(_selectedBackgroundOption!.imagePath),
+              fit: BoxFit.cover,
             ),
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Opacity(
-                  opacity: 1.0,
-                  child: RepaintBoundary(
-                    key: _repaintKey,
-                    child: Card(
-                      margin: const EdgeInsets.all(40),
-                      color: Theme.of(context).canvasColor,
-                      elevation: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: loading
-                            ? const CircularProgressIndicator()
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Text(
-                                    quoteText,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 35,
-                                      fontFamily: 'Fallscoming',
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondaryContainer,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Theme.of(context).colorScheme.background,
+                ],
+              ),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Opacity(
+                    opacity: 1.0,
+                    child: RepaintBoundary(
+                      key: _repaintKey,
+                      child: Card(
+                        margin: const EdgeInsets.all(40),
+                        color: Theme.of(context).canvasColor,
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: loading
+                              ? const CircularProgressIndicator()
+                              : Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      quoteText,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 35,
+                                        fontFamily: 'Fallscoming',
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondaryContainer,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    '-$char\n$anime',
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(
-                                      fontFamily: 'Merriweather',
-                                      fontStyle: FontStyle.italic,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onTertiaryContainer,
+                                    const SizedBox(
+                                      height: 20,
                                     ),
-                                  ),
-                                ],
-                              ),
+                                    Text(
+                                      '-$char\n$anime',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontFamily: 'Merriweather',
+                                        fontStyle: FontStyle.italic,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onTertiaryContainer,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
