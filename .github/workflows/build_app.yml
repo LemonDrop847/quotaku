@@ -27,9 +27,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       
-      - name: Run Flutter Clean
-        run: flutter clean
-        
       - name: Get packages
         run: flutter pub get
 
@@ -54,7 +51,7 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             --data-binary @build/app/outputs/flutter-apk/app-release.apk \
             "$UPLOAD_URL?name=app-release.apk")
-          UPDATED_DESCRIPTION="{\"body\": \"Latest commit: $LATEST_COMMIT_MESSAGE\"}"
+            UPDATED_DESCRIPTION="{\"body\": \"This is an automated release using Github Actions\n\nLatest Commit:\n\`\`\`\n$LATEST_COMMIT_MESSAGE\n\`\`\`\"}"
           curl -s -X PATCH \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
