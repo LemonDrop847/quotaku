@@ -54,4 +54,10 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             --data-binary @build/app/outputs/flutter-apk/app-release.apk \
             "$UPLOAD_URL?name=app-release.apk")
+          UPDATED_DESCRIPTION="{\"body\": \"Latest commit: $LATEST_COMMIT_MESSAGE\"}"
+          curl -s -X PATCH \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -d "$UPDATED_DESCRIPTION" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/${RELEASE_ID}"
           echo "Latest commit: $LATEST_COMMIT_MESSAGE"
