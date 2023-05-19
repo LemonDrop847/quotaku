@@ -27,6 +27,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       
+      - name: Run Flutter Clean
+        run: flutter clean
+        
       - name: Get packages
         run: flutter pub get
 
@@ -35,48 +38,20 @@ jobs:
 
       - name: Update Release
         id: update_release
-        uses: actions/github-script@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { Octokit } = require("@octokit/rest");
-            const fs = require("fs");
-            
-            const octokit = new Octokit({
-              auth: process.env.GITHUB_TOKEN
-            });
-            
-            async function updateRelease() {
-              const response = await octokit.repos.listReleases({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag: 'v1.0'
-              });
-              const release = response.data.find(r => r.tag_name === 'v1.0');
-              
-              const filePath = 'build/app/outputs/flutter-apk/app-release.apk';
-              const fileContent = await fs.promises.readFile(filePath);
-              
-              const commitMessage = context.payload.head_commit.message;
-              const releaseBody = `Latest commit: ${commitMessage}`;
-              
-              await octokit.repos.updateRelease({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                release_id: release.id,
-                name: 'Dev Release',
-                body: releaseBody
-              });
-              
-              await octokit.repos.uploadReleaseAsset({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                release_id: release.id,
-                name: 'app-release.apk',
-                data: fileContent
-              });
-            }
-            
-            updateRelease();
+        run: |
+          LATEST_COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
+          RELEASE_ID=$(curl -s -X GET \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/v1.0" | jq '.id')
+          UPLOAD_URL=$(curl -s -X GET \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/${RELEASE_ID}" | jq -r '.upload_url' | sed -e "s/{?name,label}//")
+          UPLOAD_RESPONSE=$(curl -s -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @build/app/outputs/flutter-apk/app-release.apk \
+            "$UPLOAD_URL?name=app-release.apk")
+          echo "Latest commit: $LATEST_COMMIT_MESSAGE"
