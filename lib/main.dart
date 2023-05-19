@@ -62,7 +62,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  BackgroundOption? _selectedBackgroundOption;
+  BackgroundOption _selectedBackgroundOption = BackgroundOption(
+    id: 0,
+    name: 'Background 1',
+    imagePath: 'assets/images/bg1.png',
+  );
   void _setBackgroundOption(BackgroundOption option) {
     setState(() {
       _selectedBackgroundOption = option;
@@ -187,6 +191,48 @@ class _MyHomePageState extends State<MyHomePage> {
     return scheduledDate;
   }
 
+  void _openBackgroundCarousel() async {
+    final selectedBackgroundOption = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BackgroundCarousel(
+          backgroundOptions: [
+            BackgroundOption(
+              id: 0,
+              name: 'Background 1',
+              imagePath: 'assets/images/bg1.png',
+            ),
+            BackgroundOption(
+              id: 1,
+              name: 'Background 2',
+              imagePath: 'assets/images/bg2.jpg',
+            ),
+            BackgroundOption(
+              id: 2,
+              name: 'Background 3',
+              imagePath: 'assets/images/bg3.jpg',
+            ),
+            BackgroundOption(
+              id: 3,
+              name: 'Background 4',
+              imagePath: 'assets/images/bg4.png',
+            ),
+            BackgroundOption(
+              id: 4,
+              name: 'Background 5',
+              imagePath: 'assets/images/bg5.png',
+            ),
+          ],
+          selectedBackgroundOption: _selectedBackgroundOption,
+          onBackgroundOptionSelected: _setBackgroundOption,
+        ),
+      ),
+    );
+    if (selectedBackgroundOption != null) {
+      _setBackgroundOption(selectedBackgroundOption);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -209,48 +255,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BackgroundCarousel(
-                backgroundOptions: [
-                  BackgroundOption(
-                    id: 'bg1',
-                    name: 'Background 1',
-                    imagePath: 'assets/images/bg1.png',
-                  ),
-                  BackgroundOption(
-                    id: 'bg2',
-                    name: 'Background 2',
-                    imagePath: 'assets/images/bg2.jpg',
-                  ),
-                  BackgroundOption(
-                    id: 'bg3',
-                    name: 'Background 3',
-                    imagePath: 'assets/images/bg3.jpg',
-                  ),
-                  BackgroundOption(
-                    id: 'bg4',
-                    name: 'Background 4',
-                    imagePath: 'assets/images/bg4.png',
-                  ),
-                  BackgroundOption(
-                    id: 'bg5',
-                    name: 'Background 5',
-                    imagePath: 'assets/images/bg5.png',
-                  ),
-                ],
-                selectedBackgroundOption: _selectedBackgroundOption,
-                onBackgroundOptionSelected: _setBackgroundOption,
-              ),
-            ),
-          );
-        },
+        onTap: _openBackgroundCarousel,
         child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(_selectedBackgroundOption!.imagePath),
+              image: AssetImage(_selectedBackgroundOption.imagePath),
               fit: BoxFit.cover,
             ),
           ),

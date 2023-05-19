@@ -24,8 +24,7 @@ class _BackgroundCarouselState extends State<BackgroundCarousel> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.backgroundOptions
-        .indexWhere((option) => option == widget.selectedBackgroundOption);
+    _currentIndex = widget.selectedBackgroundOption!.id;
     if (_currentIndex == -1) {
       _currentIndex = 0;
     }
@@ -39,38 +38,55 @@ class _BackgroundCarouselState extends State<BackgroundCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(30.0),
-      child: Card(
-        child: GestureDetector(
-          onTap: () {
-            widget.onBackgroundOptionSelected(
-                widget.backgroundOptions[_currentIndex]);
-            Navigator.pop(context);
-          },
-          child: Stack(
-            children: [
-              PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                itemCount: widget.backgroundOptions.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(
-                            widget.backgroundOptions[index].imagePath),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  );
-                },
+    final List<BackgroundOption> duplicatedOptions = [
+      ...widget.backgroundOptions,
+      ...widget.backgroundOptions,
+    ];
+
+    return Container(
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30.0),
+          child: Card(
+            child: GestureDetector(
+              onTap: () {
+                widget.onBackgroundOptionSelected(
+                  widget.backgroundOptions[_currentIndex],
+                );
+                Navigator.pop(context);
+              },
+              child: Stack(
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentIndex++;
+                        _currentIndex =
+                            _currentIndex % widget.backgroundOptions.length;
+                      });
+                    },
+                    itemCount: duplicatedOptions.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final actualIndex =
+                          _currentIndex % widget.backgroundOptions.length;
+                      return Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              duplicatedOptions[actualIndex].imagePath,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
