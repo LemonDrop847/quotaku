@@ -67,10 +67,29 @@ class _MyHomePageState extends State<MyHomePage> {
     name: 'Background 1',
     imagePath: 'assets/images/bg1.jpg',
   );
-  void _setBackgroundOption(BackgroundOption option) {
+  List<BackgroundOption> backgroundOptions = List.generate(
+    7,
+    (index) => BackgroundOption(
+      id: index,
+      name: 'Background ${index + 1}',
+      imagePath: 'assets/images/bg${index + 1}.jpg',
+    ),
+  );
+
+  void _loadSelectedBackgroundOption() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int backgroundOptionId = prefs.getInt('background_option_id') ?? 0;
+    setState(() {
+      _selectedBackgroundOption = backgroundOptions[backgroundOptionId];
+    });
+  }
+
+  void _setBackgroundOption(BackgroundOption option) async {
     setState(() {
       _selectedBackgroundOption = option;
     });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('background_option_id', option.id);
   }
 
   final GlobalKey _repaintKey = GlobalKey();
@@ -122,6 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _getQuote();
     FlutterNativeSplash.remove();
     initNotifications();
+    _loadSelectedBackgroundOption();
     super.initState();
   }
 
@@ -196,14 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context,
       MaterialPageRoute(
         builder: (context) => BackgroundCarousel(
-          backgroundOptions: List.generate(
-            7,
-            (index) => BackgroundOption(
-              id: index,
-              name: 'Background ${index + 1}',
-              imagePath: 'assets/images/bg${index + 1}.jpg',
-            ),
-          ),
+          backgroundOptions: backgroundOptions, // Pass the list here
           selectedBackgroundOption: _selectedBackgroundOption,
           onBackgroundOptionSelected: _setBackgroundOption,
         ),
