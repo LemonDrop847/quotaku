@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   BackgroundOption _selectedBackgroundOption = BackgroundOption(
     id: 0,
     name: 'Background 1',
-    imagePath: 'assets/images/bg1.png',
+    imagePath: 'assets/images/bg1.jpg',
   );
   void _setBackgroundOption(BackgroundOption option) {
     setState(() {
@@ -200,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
             BackgroundOption(
               id: 0,
               name: 'Background 1',
-              imagePath: 'assets/images/bg1.png',
+              imagePath: 'assets/images/bg1.jpg',
             ),
             BackgroundOption(
               id: 1,
@@ -215,12 +215,22 @@ class _MyHomePageState extends State<MyHomePage> {
             BackgroundOption(
               id: 3,
               name: 'Background 4',
-              imagePath: 'assets/images/bg4.png',
+              imagePath: 'assets/images/bg4.jpg',
             ),
             BackgroundOption(
               id: 4,
               name: 'Background 5',
-              imagePath: 'assets/images/bg5.png',
+              imagePath: 'assets/images/bg5.jpg',
+            ),
+            BackgroundOption(
+              id: 5,
+              name: 'Background 6',
+              imagePath: 'assets/images/bg6.jpg',
+            ),
+            BackgroundOption(
+              id: 6,
+              name: 'Background 7',
+              imagePath: 'assets/images/bg7.jpg',
             ),
           ],
           selectedBackgroundOption: _selectedBackgroundOption,
