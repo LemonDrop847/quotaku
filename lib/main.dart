@@ -196,43 +196,14 @@ class _MyHomePageState extends State<MyHomePage> {
       context,
       MaterialPageRoute(
         builder: (context) => BackgroundCarousel(
-          backgroundOptions: [
-            BackgroundOption(
-              id: 0,
-              name: 'Background 1',
-              imagePath: 'assets/images/bg1.jpg',
+          backgroundOptions: List.generate(
+            7,
+            (index) => BackgroundOption(
+              id: index,
+              name: 'Background ${index + 1}',
+              imagePath: 'assets/images/bg${index + 1}.jpg',
             ),
-            BackgroundOption(
-              id: 1,
-              name: 'Background 2',
-              imagePath: 'assets/images/bg2.jpg',
-            ),
-            BackgroundOption(
-              id: 2,
-              name: 'Background 3',
-              imagePath: 'assets/images/bg3.jpg',
-            ),
-            BackgroundOption(
-              id: 3,
-              name: 'Background 4',
-              imagePath: 'assets/images/bg4.jpg',
-            ),
-            BackgroundOption(
-              id: 4,
-              name: 'Background 5',
-              imagePath: 'assets/images/bg5.jpg',
-            ),
-            BackgroundOption(
-              id: 5,
-              name: 'Background 6',
-              imagePath: 'assets/images/bg6.jpg',
-            ),
-            BackgroundOption(
-              id: 6,
-              name: 'Background 7',
-              imagePath: 'assets/images/bg7.jpg',
-            ),
-          ],
+          ),
           selectedBackgroundOption: _selectedBackgroundOption,
           onBackgroundOptionSelected: _setBackgroundOption,
         ),
