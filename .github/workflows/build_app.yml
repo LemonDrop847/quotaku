@@ -29,10 +29,13 @@ jobs:
       
       - name: Get packages
         run: flutter pub get
-
+        
+      - name: App Logo
+        run: flutter pub run flutter_launcher_icons
+        
       - name: Build APK
         run: flutter build apk --release
-
+      
       - name: Update Release
         id: update_release
         run: |
