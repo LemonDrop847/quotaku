@@ -1,36 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quotaku/image_gen.dart';
 import 'dart:convert';
 import 'background_carousel.dart';
 import 'background_option.dart';
 import 'menu.dart';
+import 'quote.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MyApp());
-}
-
-class Quote {
-  Quote({
-    required this.anime,
-    required this.character,
-    required this.quote,
-  });
-
-  String anime;
-  String character;
-  String quote;
-  factory Quote.fromJson(Map<String, dynamic> json) {
-    return Quote(
-        anime: json['anime'],
-        character: json['character'],
-        quote: json['quote']);
-  }
 }
 
 class MyApp extends StatelessWidget {
@@ -96,8 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String anime = '';
   String char = '';
   bool loading = true;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+
   void _getQuote() async {
     var headersList = {
       'Accept': '*/*',
@@ -128,19 +109,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void initNotifications() async {
-    const initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
-
   @override
   void initState() {
     _getQuote();
     FlutterNativeSplash.remove();
-    initNotifications();
     _loadSelectedBackgroundOption();
     super.initState();
   }
