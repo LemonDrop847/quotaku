@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:quotaku/image_gen.dart';
 import 'dart:convert';
 import 'background_carousel.dart';
@@ -116,13 +115,14 @@ class _MyHomePageState extends State<MyHomePage> {
       final responseJson = jsonDecode(resBody);
       final quote = Quote.fromJson(responseJson);
       print(quote.quote);
-      setState(() {
-        loading = false;
-        quoteText = quote.quote;
-        char = quote.character;
-        anime = quote.anime;
-      });
-      scheduleDailyQuoteNotification(quoteText);
+      setState(
+        () {
+          loading = false;
+          quoteText = quote.quote;
+          char = quote.character;
+          anime = quote.anime;
+        },
+      );
     } else {
       print(res.reasonPhrase);
     }
@@ -176,47 +176,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void scheduleDailyQuoteNotification(String quote) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    const int notificationId = 0;
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      notificationId,
-      'Quotaku Daily Quote',
-      quote,
-      _nextInstanceOfTime(),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_quote_channel',
-          'Anime Quote Channel',
-          importance: Importance.defaultImportance,
-        ),
-      ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
-
-    prefs.setString('last_quote', quote);
-  }
-
-  tz.TZDateTime _nextInstanceOfTime() {
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, 10); // 10 AM
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-    return scheduledDate;
-  }
-
   void _openBackgroundCarousel() async {
     final selectedBackgroundOption = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => BackgroundCarousel(
-          backgroundOptions: backgroundOptions, // Pass the list here
+          backgroundOptions: backgroundOptions,
           selectedBackgroundOption: _selectedBackgroundOption,
           onBackgroundOptionSelected: _setBackgroundOption,
         ),
