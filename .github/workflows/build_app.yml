@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Init Java
         uses: actions/setup-java@v2
@@ -29,10 +28,10 @@ jobs:
       
       - name: Get packages
         run: flutter pub get
-
+        
       - name: Build APK
         run: flutter build apk --release
-
+      
       - name: Update Release
         id: update_release
         run: |
