@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'Accept': '*/*',
       'User-Agent': 'Thunder Client (https://www.thunderclient.com)'
     };
-    var url = Uri.parse('https://lemonquotaku.pythonanywhere.com/quote');
+    var url = Uri.parse('https://quotaku.up.railway.app/quote');
 
     var req = http.Request('GET', url);
     req.headers.addAll(headersList);
@@ -125,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'Accept': '*/*',
       'User-Agent': 'Thunder Client (https://www.thunderclient.com)'
     };
-    var url = Uri.parse('https://lemonquotaku.pythonanywhere.com/forcequote');
+    var url = Uri.parse('https://quotaku.up.railway.app/forcequote');
 
     var req = http.Request('GET', url);
     req.headers.addAll(headersList);
