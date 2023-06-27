@@ -82,7 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void _getQuote() async {
     var headersList = {
       'Accept': '*/*',
-      'User-Agent': 'Thunder Client (https://www.thunderclient.com)'
     };
     var url = Uri.parse('https://quotaku.up.railway.app/quote');
 
@@ -123,7 +122,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     var headersList = {
       'Accept': '*/*',
-      'User-Agent': 'Thunder Client (https://www.thunderclient.com)'
     };
     var url = Uri.parse('https://quotaku.up.railway.app/forcequote');
 

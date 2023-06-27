@@ -7,11 +7,11 @@ class BackgroundCarousel extends StatefulWidget {
   final Function(BackgroundOption) onBackgroundOptionSelected;
 
   const BackgroundCarousel({
-    super.key,
+    Key? key,
     required this.backgroundOptions,
     required this.selectedBackgroundOption,
     required this.onBackgroundOptionSelected,
-  });
+  }) : super(key: key);
 
   @override
   _BackgroundCarouselState createState() => _BackgroundCarouselState();
@@ -20,6 +20,7 @@ class BackgroundCarousel extends StatefulWidget {
 class _BackgroundCarouselState extends State<BackgroundCarousel> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
+  int _actualIndex = 0;
 
   @override
   void initState() {
@@ -53,7 +54,7 @@ class _BackgroundCarouselState extends State<BackgroundCarousel> {
             child: GestureDetector(
               onTap: () {
                 widget.onBackgroundOptionSelected(
-                  widget.backgroundOptions[_currentIndex],
+                  widget.backgroundOptions[_actualIndex],
                 );
                 Navigator.pop(context);
               },
@@ -70,13 +71,13 @@ class _BackgroundCarouselState extends State<BackgroundCarousel> {
                     },
                     itemCount: duplicatedOptions.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final actualIndex =
+                      _actualIndex =
                           _currentIndex % widget.backgroundOptions.length;
                       return Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
-                              duplicatedOptions[actualIndex].imagePath,
+                              duplicatedOptions[_actualIndex].imagePath,
                             ),
                             fit: BoxFit.cover,
                           ),
