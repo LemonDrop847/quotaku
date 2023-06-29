@@ -1,4 +1,4 @@
 # Quotaku
 
-Flutter App to Get and Share Anime Quotes!!
+Flutter App to Get and Share Anime Quotes. 
 
