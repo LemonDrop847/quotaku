@@ -24,6 +24,6 @@ Future<void> shareCardAsImage(
   final imageFile = File(imagePath);
   await imageFile.writeAsBytes(bytes);
 
-  final textToShare = '$quote\n\n-$details';
+  final textToShare = '$quote\n\n-$details\nFrom Quotaku!!';
   await Share.shareFiles([imagePath], text: textToShare);
 }
