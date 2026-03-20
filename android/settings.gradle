@@ -8,4 +8,12 @@ localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
 
 def flutterSdkPath = properties.getProperty("flutter.sdk")
 assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
-apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
+// The old Flutter Gradle plugin was applied imperatively here which
+// newer Gradle no longer allows. The plugin should be applied
+// declaratively via the Gradle `plugins` block by consuming
+// newer Android/Flutter project templates. Removing this line
+// prevents the "app_plugin_loader" apply-from error during build.
+// If you need plugin management, migrate to using the `plugins` block
+// and pluginManagement repositories as documented by Flutter.
+
+// apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
